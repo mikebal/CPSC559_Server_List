@@ -9,8 +9,8 @@ public class Tracker {
     private String max_slots;
     private static final int TRACKER_ARGUMENTS = 5;
 
-    public void Tracker(String input){
-        String[] strAray = input.split("\n");
+    public Tracker(String input){
+        String[] strAray = input.split("'#");
         if(strAray.length == TRACKER_ARGUMENTS)
         {
             address = strAray[0];
@@ -23,5 +23,16 @@ public class Tracker {
 
     public void updateFreeSlots(String newFreeSlots){
         free_slots = newFreeSlots;
+    }
+
+    public String getTracker(){
+        String concatonatedTrackerObject = "";
+        concatonatedTrackerObject += address + "\n";
+        concatonatedTrackerObject += name + "\n";
+        concatonatedTrackerObject += port + "\n";
+        concatonatedTrackerObject += free_slots + "\n";
+        concatonatedTrackerObject += max_slots + "\n";
+
+        return concatonatedTrackerObject;
     }
 }

@@ -2,6 +2,7 @@
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MultiThreadedServer implements Runnable{
 
@@ -9,9 +10,11 @@ public class MultiThreadedServer implements Runnable{
     protected ServerSocket serverSocket = null;
     protected boolean      isStopped    = false;
     protected Thread       runningThread= null;
+    public ArrayList<Tracker> trackerList;
 
-    public MultiThreadedServer(int port){
+    public MultiThreadedServer(int port, ArrayList<Tracker> trackerList){
         this.serverPort = port;
+        this.trackerList = trackerList;
     }
 
     public void run(){
@@ -33,7 +36,7 @@ public class MultiThreadedServer implements Runnable{
             }
             new Thread(
                     new WorkerRunnable(
-                            clientSocket, "Multithreaded Server")
+                            clientSocket, "Multithreaded Server", trackerList)
             ).start();
         }
         System.out.println("Server Stopped.") ;
