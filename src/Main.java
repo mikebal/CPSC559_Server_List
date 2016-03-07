@@ -12,7 +12,8 @@ public class Main {
         new Thread(server).start();
 
         try {
-            Thread.sleep(20 * 1000);
+            Thread.sleep(1000);
+            System.out.println("Redirect Server Running...");
             while(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -20,6 +21,4 @@ public class Main {
         System.out.println("Stopping Server");
         server.stop();
     }
-
-
 }

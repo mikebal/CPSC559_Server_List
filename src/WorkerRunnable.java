@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-
 /**
 
  */
@@ -22,38 +21,36 @@ public class WorkerRunnable implements Runnable{
         try {
             InputStream input  = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
-            String recevedMSG = "";//input.read();
+            String receivedMSG = "";
 
             try{
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         clientSocket.getInputStream()));
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),
                         true);
-                recevedMSG = in.readLine();
-                System.out.println(recevedMSG);
 
-                if(recevedMSG.equals("New Server"))
+                receivedMSG = in.readLine();
+                System.out.println("New Connection: " + receivedMSG);
+
+                if(receivedMSG.equals("New Server"))
                 {
-                    System.out.println("In server");
                     output.write("READY FOR SERVER INFO\n".getBytes());
 
-                    recevedMSG = in.readLine();
-                    while(recevedMSG == null)
-                        recevedMSG = in.readLine();
+                    receivedMSG = in.readLine();
+                    System.out.println("New server info: " + receivedMSG);
+                    while(receivedMSG == null)
+                        receivedMSG = in.readLine();
 
-                    Tracker newServer = new Tracker(recevedMSG);
-                    trackerList.add(newServer);
-
-                        System.out.println(recevedMSG);
-
+                    Tracker newServer = new Tracker(receivedMSG);
+                    ServerManager serverManager = new ServerManager(trackerList);
+                    serverManager.addServerToList(newServer);
                 }
-                else{
+                else
+                {
+                    System.out.println("Sending Server list to (" + receivedMSG + ")");
                     String trackerString = getServerListString(trackerList);
-                    output.write((trackerString).getBytes());
+                    out.println(trackerString);
                 }
-                System.out.println("Out of server");
-
-
 
             } catch (IOException e) {
                 System.out.println("Read failed");
@@ -63,7 +60,7 @@ public class WorkerRunnable implements Runnable{
 
             output.close();
             input.close();
-            System.out.println( recevedMSG + "      " + time);
+           // System.out.println( recevedMSG + "      " + time);
         } catch (IOException e) {
             //report exception somewhere.
             e.printStackTrace();
@@ -73,8 +70,11 @@ public class WorkerRunnable implements Runnable{
     {
         String trackerString = "";
 
-        for(int i = 0; i < trackerList.size(); i++)
-            trackerString += trackerList.get(i).getTracker();
+        if(trackerList.size() == 0)
+            trackerString = "No servers are currently running";
+        else
+            for(int i = 0; i < trackerList.size(); i++)
+                trackerString += trackerList.get(i).getTracker();
 
         return trackerString;
     }
