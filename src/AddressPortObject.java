@@ -19,4 +19,17 @@ public class AddressPortObject {
     public String getAddressPort(){
         return IP_address + PARSABLE_CHARACTER + port + PARSABLE_CHARACTER;
     }
+
+    @Override
+
+    public boolean equals(Object object){
+        if(object != null && object instanceof AddressPortObject)
+        {
+            AddressPortObject addr = (AddressPortObject)object;
+            return addr.getAddressPort().equals(this.getAddressPort());
+        }
+        else
+            return false;
+
+    }
 }

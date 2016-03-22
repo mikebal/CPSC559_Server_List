@@ -37,6 +37,7 @@ public class Tracker {
         String concatenatedTrackerObject = "";
         int index = roundRobinIndex;
 
+        //inspect
         concatenatedTrackerObject += name + "'#";
         concatenatedTrackerObject += String.valueOf(addressPort.size()) + "'#";
         for(int i = 0; i < addressPort.size(); i++) {

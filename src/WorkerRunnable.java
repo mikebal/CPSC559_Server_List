@@ -1,9 +1,22 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ListIterator;
 /**
 
  */
+
+class TrackerTuple{
+    public String ip;
+    public String port;
+
+    public TrackerTuple(String ip, String port){
+        this.ip = ip;
+        this.port = port;
+    }
+
+}
+
 public class WorkerRunnable implements Runnable{
 
     protected Socket clientSocket = null;
@@ -44,6 +57,41 @@ public class WorkerRunnable implements Runnable{
                     Tracker newServer = new Tracker(receivedMSG);
                     ServerManager serverManager = new ServerManager(trackerList);
                     serverManager.addServerToList(newServer);
+
+                    ListIterator<Tracker> itr = trackerList.listIterator();
+                    while(itr.hasNext())
+                    {
+                        Tracker tracker = itr.next();
+                        boolean hasSiblingTrackers = false;
+                        ListIterator<AddressPortObject> addrItr= tracker.addressPort.listIterator();
+                        while(addrItr.hasNext())
+                        {
+                            AddressPortObject addr = addrItr.next();
+                            Socket sock = new Socket(addr.get_ip_address(), Integer.parseInt(addr.get_port()));
+                            PrintWriter pw = new PrintWriter(sock.getOutputStream(), true);
+                            String str = new String();
+
+                            ListIterator<AddressPortObject> addrItr2 = tracker.addressPort.listIterator();
+
+                            str = str + (tracker.getTrackerName() + "'#");
+                            while(addrItr2.hasNext())
+                            {
+                                AddressPortObject addr2 = addrItr2.next();
+                                if(!addr2.equals(addr))
+                                {
+                                    str += addr2.getAddressPort();
+                                    hasSiblingTrackers = true;
+                                }
+
+                            }
+                            if(hasSiblingTrackers)
+                                pw.println("new-sibling-trackers" + "'#" + str);
+                            sock.close();
+                        }
+
+
+                    }
+
                 }
                 else
                 {
@@ -79,3 +127,4 @@ public class WorkerRunnable implements Runnable{
         return trackerString;
     }
 }
+
