@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
  * Created by Michael on 2/23/2016.
  */
-public class Tracker {
+public class Tracker implements Serializable {
     public ArrayList<AddressPortObject> addressPort = new ArrayList<>();
     private String name;
     private String free_slots;
@@ -37,7 +38,6 @@ public class Tracker {
         String concatenatedTrackerObject = "";
         int index = roundRobinIndex;
 
-        //inspect
         concatenatedTrackerObject += name + "'#";
         concatenatedTrackerObject += String.valueOf(addressPort.size()) + "'#";
         for(int i = 0; i < addressPort.size(); i++) {
@@ -59,4 +59,5 @@ public class Tracker {
     }
 
     public String getTrackerName(){return this.name;}
+
 }

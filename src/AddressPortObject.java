@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * Created by Michael on 3/6/2016.
  */
-public class AddressPortObject {
+public class AddressPortObject implements Serializable{
     private String IP_address;
     private String port;
     private static final String PARSABLE_CHARACTER = "'#";

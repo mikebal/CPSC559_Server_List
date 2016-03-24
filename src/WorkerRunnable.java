@@ -22,11 +22,14 @@ public class WorkerRunnable implements Runnable{
     protected Socket clientSocket = null;
     protected String serverText   = null;
     public ArrayList<Tracker> trackerList;
+    public ArrayList<Tracker> update;
+    private boolean isBackup;
 
-    public WorkerRunnable(Socket clientSocket, String serverText, ArrayList<Tracker> trackerList) {
+    public WorkerRunnable(Socket clientSocket, String serverText, ArrayList<Tracker> trackerList, boolean isBackup) {
         this.clientSocket = clientSocket;
         this.serverText   = serverText;
         this.trackerList = trackerList;
+        this.isBackup = isBackup;
     }
 
     public void run() {
@@ -42,11 +45,26 @@ public class WorkerRunnable implements Runnable{
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),
                         true);
 
-                receivedMSG = in.readLine();
+                InputStream inputStream = clientSocket.getInputStream();
+                BufferedInputStream  buff = new BufferedInputStream (clientSocket.getInputStream());
+                while(buff.available() == 0);
+                int ch = inputStream.read();
+                StringBuffer stringBuffer = new StringBuffer();
+                
+                while((char)ch != '\n' && (char)ch != '\r')
+                {
+                    stringBuffer.append((char)ch);
+                    ch = inputStream.read();
+                }
+                receivedMSG = stringBuffer.toString();
+                //System.out.println(stringBuffer.toString());
+
+                //receivedMSG = in.readLine();
                 System.out.println("New Connection: " + receivedMSG);
 
                 if(receivedMSG.equals("New Server"))
                 {
+                    in.readLine();
                     output.write("READY FOR SERVER INFO\n".getBytes());
 
                     receivedMSG = in.readLine();
@@ -57,7 +75,6 @@ public class WorkerRunnable implements Runnable{
                     Tracker newServer = new Tracker(receivedMSG);
                     ServerManager serverManager = new ServerManager(trackerList);
                     serverManager.addServerToList(newServer);
-
                     ListIterator<Tracker> itr = trackerList.listIterator();
                     while(itr.hasNext())
                     {
@@ -76,6 +93,7 @@ public class WorkerRunnable implements Runnable{
                             str = str + (tracker.getTrackerName() + "'#");
                             while(addrItr2.hasNext())
                             {
+                                
                                 AddressPortObject addr2 = addrItr2.next();
                                 if(!addr2.equals(addr))
                                 {
@@ -88,27 +106,35 @@ public class WorkerRunnable implements Runnable{
                                 pw.println("new-sibling-trackers" + "'#" + str);
                             sock.close();
                         }
-
-
                     }
-
+                }
+                else if(receivedMSG.equals("update")){
+                    ObjectInputStream objectInputStream = open(clientSocket);
+                    update = (ArrayList<Tracker>)objectInputStream.readObject();
+                    ListIterator<Tracker> itr = update.listIterator();
+                    trackerList.clear();
+                    trackerList.addAll(update);
                 }
                 else
                 {
                     System.out.println("Sending Server list to (" + receivedMSG + ")");
                     String trackerString = getServerListString(trackerList);
                     out.println(trackerString);
+                    System.out.println(trackerString);
                 }
 
             } catch (IOException e) {
                 System.out.println("Read failed");
+                e.printStackTrace();
                 System.exit(-1);
+            }
+            catch(ClassNotFoundException e){
+                e.printStackTrace();
             }
             long time = System.currentTimeMillis();
 
             output.close();
             input.close();
-           // System.out.println( recevedMSG + "      " + time);
         } catch (IOException e) {
             //report exception somewhere.
             e.printStackTrace();
@@ -125,6 +151,31 @@ public class WorkerRunnable implements Runnable{
                 trackerString += trackerList.get(i).getTracker();
 
         return trackerString;
+    }
+
+    private ObjectInputStream open(Socket s) throws IOException{
+        try{
+            ObjectInputStream o = new ObjectInputStream(s.getInputStream());
+            return o;
+        }
+        catch(Exception e){
+            try{
+
+                InputStream inputStream= s.getInputStream();
+                int ch = inputStream.read();
+                System.out.println("read a byte");
+                if (ch != -1)
+                    open(s);
+                else{
+                    System.out.println("reached end of stream");
+                }
+            }
+            catch(Exception ee){
+                ee.printStackTrace();
+            }
+        }
+        System.out.println("null");
+        return null;
     }
 }
 
