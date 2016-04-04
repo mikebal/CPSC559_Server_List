@@ -1,5 +1,7 @@
 /**
  * Created by Michael on 3/6/2016.
+ *
+ * AddressPortObject is a simple object to hold the structure of the required connection information within our server lists.
  */
 public class AddressPortObject {
     private String IP_address;
