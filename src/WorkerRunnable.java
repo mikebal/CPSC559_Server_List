@@ -75,38 +75,8 @@ public class WorkerRunnable implements Runnable{
                     Tracker newServer = new Tracker(receivedMSG);
                     ServerManager serverManager = new ServerManager(trackerList);
                     serverManager.addServerToList(newServer);
-                    ListIterator<Tracker> itr = trackerList.listIterator();
-                    while(itr.hasNext())
-                    {
-                        Tracker tracker = itr.next();
-                        boolean hasSiblingTrackers = false;
-                        ListIterator<AddressPortObject> addrItr= tracker.addressPort.listIterator();
-                        while(addrItr.hasNext())
-                        {
-                            AddressPortObject addr = addrItr.next();
-                            Socket sock = new Socket(addr.get_ip_address(), Integer.parseInt(addr.get_port()));
-                            PrintWriter pw = new PrintWriter(sock.getOutputStream(), true);
-                            String str = new String();
+                    notifyTrackers();
 
-                            ListIterator<AddressPortObject> addrItr2 = tracker.addressPort.listIterator();
-
-                            str = str + (tracker.getTrackerName() + "'#");
-                            while(addrItr2.hasNext())
-                            {
-                                
-                                AddressPortObject addr2 = addrItr2.next();
-                                if(!addr2.equals(addr))
-                                {
-                                    str += addr2.getAddressPort();
-                                    hasSiblingTrackers = true;
-                                }
-
-                            }
-                            if(hasSiblingTrackers)
-                                pw.println("new-sibling-trackers" + "'#" + str);
-                            sock.close();
-                        }
-                    }
                 }
                 else if(receivedMSG.equals("update")){
                     ObjectInputStream objectInputStream = open(clientSocket);
@@ -176,6 +146,47 @@ public class WorkerRunnable implements Runnable{
         }
         System.out.println("null");
         return null;
+    }
+
+    /**
+    * Notifies trackers when there is a new tracker in their group
+    */
+    public void notifyTrackers(){
+        try{
+        ListIterator<Tracker> itr = trackerList.listIterator();
+        while(itr.hasNext())
+        {
+            Tracker tracker = itr.next();
+            boolean hasSiblingTrackers = false;
+            ListIterator<AddressPortObject> addrItr= tracker.addressPort.listIterator();
+            while(addrItr.hasNext())
+            {
+                AddressPortObject addr = addrItr.next();
+                Socket sock = new Socket(addr.get_ip_address(), Integer.parseInt(addr.get_port()));
+                PrintWriter pw = new PrintWriter(sock.getOutputStream(), true);
+                String str = new String();
+
+                ListIterator<AddressPortObject> addrItr2 = tracker.addressPort.listIterator();
+
+                str = str + (tracker.getTrackerName() + "'#");
+                while(addrItr2.hasNext())
+                {
+                    AddressPortObject addr2 = addrItr2.next();
+                    if(!addr2.equals(addr))
+                    {
+                        str += addr2.getAddressPort();
+                        hasSiblingTrackers = true;
+                    }
+
+                }
+                if(hasSiblingTrackers)
+                    pw.println("new-sibling-trackers" + "'#" + str);
+                            sock.close();
+                        }
+                    }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
 
