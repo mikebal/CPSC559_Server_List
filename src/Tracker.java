@@ -31,10 +31,28 @@ public class Tracker {
         this.addressPort.add(newServerInfo);
     }
 
-    public void updateFreeSlots(String newFreeSlots){
-        free_slots = newFreeSlots;
+    /**
+     * function: updateFreeSlots
+     * purpose: incrment/decrement the active peer count up or down depending on input
+     * @param newFreeSlots
+     */
+    public void updateFreeSlots(String newFreeSlots)
+    {
+        int currentFreeSlots = Integer.valueOf(free_slots);
+
+        currentFreeSlots += Integer.valueOf(newFreeSlots);
+        free_slots = String.valueOf(currentFreeSlots);
     }
 
+    public void updateMaxSlots(String newSlots){
+        int currentMazSlots = Integer.valueOf(max_slots);
+        currentMazSlots += Integer.valueOf(newSlots);
+        max_slots = String.valueOf(currentMazSlots);
+    }
+
+    public String getMax_slots(){return max_slots;}
+
+    public String getFree_slots(){return free_slots;}
 
     /*
         function:  getTracker
@@ -45,7 +63,7 @@ public class Tracker {
         String concatenatedTrackerObject = "";
         int index = roundRobinIndex; // start position
 
-        concatenatedTrackerObject += name + "'#";  //Get the name of the server
+        concatenatedTrackerObject += name + "\t" + getFree_slots() + "/" + getMax_slots() + "'#";                               //Get the name of the server
         concatenatedTrackerObject += String.valueOf(addressPort.size()) + "'#"; // Get the number of servers
         for(int i = 0; i < addressPort.size(); i++) {
             concatenatedTrackerObject += addressPort.get(index).getAddressPort(); // For all the servers get their IP and Port.

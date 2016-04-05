@@ -23,6 +23,7 @@ public class ServerManager
         {
             AddressPortObject accessInfo = newTracker.getAddressPort(); // Get the IP/Port of the server being added
             serverList.get(index).addNewServerAddress(accessInfo);      // Add it to the list
+            serverList.get(index).updateMaxSlots(newTracker.getMax_slots());
         }
     }
 
@@ -50,5 +51,22 @@ public class ServerManager
             }
         }
         return index;
+    }
+
+    /**
+     * function: newClientChanged
+     * purpose:  Changes the count of active peers for a set tracker group
+     * @param serverList
+     * @param serverName
+     * @param direction
+     */
+    public void newClientChanged(ArrayList<Tracker> serverList, String serverName, String direction)
+    {
+        int index = getServerIndex(serverList, serverName);
+        if(index != -1)
+        {
+            Tracker toUpdate = serverList.get(index);
+            toUpdate.updateFreeSlots(direction);
+        }
     }
 }

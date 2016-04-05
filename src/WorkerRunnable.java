@@ -22,6 +22,8 @@ public class WorkerRunnable implements Runnable{
             InputStream input  = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             String receivedMSG;
+            String[] parsedInput;
+            ServerManager serverManager;
 
             try{
                 BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -42,9 +44,19 @@ public class WorkerRunnable implements Runnable{
                         receivedMSG = in.readLine();
 
                     Tracker newServer = new Tracker(receivedMSG);      // Create a tracker object for the server ( IP_address / port)
-                    ServerManager serverManager = new ServerManager(trackerList);
+                    serverManager = new ServerManager(trackerList);
                     serverManager.addServerToList(newServer);  // Add tracker to group if possible; else create new group
                 }
+                else if(receivedMSG.contains("'#"))
+                {
+                    parsedInput = receivedMSG.split("'#");
+                    if(parsedInput[0].equals("update"))     // update indicates that an existing Tracker Server is changing it's Client connection count
+                    {
+                        serverManager = new ServerManager(trackerList);
+                        serverManager.newClientChanged(trackerList, parsedInput[1],parsedInput[2]);  // Add tracker to group if possible; else create new group
+                    }
+                }
+
                 else // if a client has connected to the redirect server
                 {
                     System.out.println("Sending Server list to (" + receivedMSG + ")");
