@@ -1,9 +1,11 @@
+import java.io.Serializable;
+
 /**
  * Created by Michael on 3/6/2016.
  *
  * AddressPortObject is a simple object to hold the structure of the required connection information within our server lists.
  */
-public class AddressPortObject {
+public class AddressPortObject implements Serializable{
     private String IP_address;
     private String port;
     private static final String PARSABLE_CHARACTER = "'#";
@@ -20,5 +22,18 @@ public class AddressPortObject {
 
     public String getAddressPort(){
         return IP_address + PARSABLE_CHARACTER + port + PARSABLE_CHARACTER;
+    }
+
+    @Override
+
+    public boolean equals(Object object){
+        if(object != null && object instanceof AddressPortObject)
+        {
+            AddressPortObject addr = (AddressPortObject)object;
+            return addr.getAddressPort().equals(this.getAddressPort());
+        }
+        else
+            return false;
+
     }
 }

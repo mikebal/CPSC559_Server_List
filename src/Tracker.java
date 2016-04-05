@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
  * Created by Michael on 2/23/2016.
  *
  * Tracker is an object used to hold vital connection information relating to the access points of a tracker group
  */
-public class Tracker {
+public class Tracker implements Serializable {
     public ArrayList<AddressPortObject> addressPort = new ArrayList<>();
     private String name;         // The name of the server or 'category'
     private String free_slots;   // The number of available open connections to servers within the group
@@ -88,4 +89,5 @@ public class Tracker {
     }
 
     public String getTrackerName(){return this.name;}
+
 }
