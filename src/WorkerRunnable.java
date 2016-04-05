@@ -6,17 +6,6 @@ import java.util.ListIterator;
 
  */
 
-class TrackerTuple{
-    public String ip;
-    public String port;
-
-    public TrackerTuple(String ip, String port){
-        this.ip = ip;
-        this.port = port;
-    }
-
-}
-
 public class WorkerRunnable implements Runnable{
 
     protected Socket clientSocket = null;
