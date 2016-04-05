@@ -14,24 +14,24 @@ public class Main {
         String ipAddress = getIPaddress();
         int port = 9000;
 
-        if(args.length == 0)
+        if(args.length == 0) //start a primary server with updates sent to the default ip and port
         {
             Updater updater = new Updater(5000, backupIP, backupPort, trackerList);
             updater.start();
         }
-        else if(args.length == 1 && args[0].equalsIgnoreCase("Backup"))
+        else if(args.length == 1 && args[0].equalsIgnoreCase("Backup")) //start a backup server on the default port
         {
             System.out.println("Redirect backup server starting");
             isBackup = true;
             port = 7000;
         }
-        else if(args.length == 2 && args[0].equalsIgnoreCase("Backup"))
+        else if(args.length == 2 && args[0].equalsIgnoreCase("Backup")) //start a backup server on the command-line specified port
         {
             System.out.println("Redirect backup server starting");
             isBackup = true;
             port = Integer.parseInt(args[1]);
         }
-        else if(args.length == 2)
+        else if(args.length == 2) //start a primary server with updates sent to the command-line specified ip and port
         {
             backupIP = args[0];
             backupPort = Integer.parseInt(args[1]);
