@@ -12,13 +12,11 @@ public class WorkerRunnable implements Runnable{
     protected String serverText   = null;
     public ArrayList<Tracker> trackerList;
     public ArrayList<Tracker> update;
-    private boolean isBackup;
 
-    public WorkerRunnable(Socket clientSocket, String serverText, ArrayList<Tracker> trackerList, boolean isBackup) {
+    public WorkerRunnable(Socket clientSocket, String serverText, ArrayList<Tracker> trackerList) {
         this.clientSocket = clientSocket;
         this.serverText   = serverText;
         this.trackerList = trackerList;
-        this.isBackup = isBackup;
     }
 
     public void run() {

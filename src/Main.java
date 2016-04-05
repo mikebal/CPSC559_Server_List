@@ -45,7 +45,7 @@ public class Main {
         }
 
 
-        MultiThreadedServer server = new MultiThreadedServer(port, trackerList, isBackup);
+        MultiThreadedServer server = new MultiThreadedServer(port, trackerList);
         new Thread(server).start();
 
         try {

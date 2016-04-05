@@ -10,12 +10,10 @@ public class MultiThreadedServer implements Runnable{
     protected boolean      isStopped    = false;
     protected Thread       runningThread= null;
     public ArrayList<Tracker> trackerList;
-    private boolean isBackup;
 
-    public MultiThreadedServer(int port, ArrayList<Tracker> trackerList, boolean isBackup){
+    public MultiThreadedServer(int port, ArrayList<Tracker> trackerList){
         this.serverPort = port;
         this.trackerList = trackerList;
-        this.isBackup = isBackup;
     }
 
     public void run(){
@@ -37,7 +35,7 @@ public class MultiThreadedServer implements Runnable{
             }
             new Thread(
                     new WorkerRunnable(
-                            clientSocket, "Multithreaded Server", trackerList, isBackup)
+                            clientSocket, "Multithreaded Server", trackerList)
             ).start();
         }
         System.out.println("Server Stopped.") ;
